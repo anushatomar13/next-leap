@@ -42,7 +42,6 @@ export default function GeneratePage() {
     setLoading(false)
   }
 }
-
 const handlePDFDownload = async () => {
   const chartElement = document.querySelector('.mermaid')
 
@@ -51,37 +50,53 @@ const handlePDFDownload = async () => {
     return
   }
 
+  // Render chart on black background for screenshot
+  chartElement.style.backgroundColor = '#000000'
+
   const canvas = await html2canvas(chartElement, {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#000000',
     scale: 2,
   })
 
   const imgData = canvas.toDataURL('image/png')
-
   const pdf = new jsPDF({
     orientation: 'portrait',
     unit: 'pt',
     format: 'a4',
   })
 
-  
-  const imgWidth = canvas.width
-  const imgHeight = canvas.height
-pdf.setFont('times', 'italic')           
-pdf.setFontSize(12)
-pdf.setTextColor(100, 100, 100)         
+  const pageWidth = pdf.internal.pageSize.getWidth()
+  const pageHeight = pdf.internal.pageSize.getHeight()
 
-// Align right at bottom-right corner
-const pageWidth = pdf.internal.pageSize.getWidth()
-const pageHeight = pdf.internal.pageSize.getHeight()
+  // Fill black background
+  pdf.setFillColor(0, 0, 0)
+  pdf.rect(0, 0, pageWidth, pageHeight, 'F')
 
-pdf.text('By NextLeap', pageWidth - 80, pageHeight - 30)
-  // Scale to fit A4
-  const scale = Math.min(pageWidth / imgWidth, pageHeight / imgHeight)
-  const x = (pageWidth - imgWidth * scale) / 2
-  const y = 40 // leave top margin
+  // Add yellow inner border
+  const borderPadding = 20
+  pdf.setDrawColor(255, 204, 0) // Yellow
+  pdf.setLineWidth(4)
+  pdf.rect(borderPadding, borderPadding, pageWidth - 2 * borderPadding, pageHeight - 2 * borderPadding)
 
-  pdf.addImage(imgData, 'PNG', x, y, imgWidth * scale, imgHeight * scale)
+  // Add header title
+  pdf.setFont('helvetica', 'bold')
+  pdf.setFontSize(18)
+  pdf.setTextColor(255, 255, 255)
+  pdf.text('Roadmap by Next Leap', pageWidth / 2, 50, { align: 'center' })
+
+  // Add flowchart image centered
+  const scale = Math.min((pageWidth - 100) / canvas.width, (pageHeight - 200) / canvas.height)
+  const imgWidth = canvas.width * scale
+  const imgHeight = canvas.height * scale
+  const x = (pageWidth - imgWidth) / 2
+const y = (pageHeight - imgHeight) / 2 + 20 
+  pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight)
+
+  // Add bottom-right branding
+  pdf.setFont('times', 'italic')
+  pdf.setFontSize(12)
+  pdf.setTextColor(180, 180, 180)
+
   pdf.save('career-roadmap.pdf')
 }
 
@@ -121,9 +136,11 @@ pdf.text('By NextLeap', pageWidth - 80, pageHeight - 30)
         </button>
       </div>
 
-      {mermaidCode && (
+     {mermaidCode && (
   <div className="mt-8 border rounded p-4 bg-white shadow">
-    <MermaidRenderer chart={mermaidCode} />
+    <div className="flex justify-center overflow-auto">
+      <MermaidRenderer chart={mermaidCode} />
+    </div>
     <button
       onClick={handlePDFDownload}
       className="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
@@ -132,6 +149,7 @@ pdf.text('By NextLeap', pageWidth - 80, pageHeight - 30)
     </button>
   </div>
 )}
+
 
     </main>
   )
