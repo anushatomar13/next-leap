@@ -104,47 +104,48 @@ export default function Navbar({ user, onSignInClick }) {
           </div>
         </div>
 
-        {isMobileOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="md:hidden py-4 space-y-3 border-t border-gray-700 mt-2"
-          >
-            {navItems.map(({ path, name }) => (
-              <Link
-                key={path}
-                href={path}
-                className="block px-4 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/40 rounded transition"
-                onClick={() => setIsMobileOpen(false)}
-              >
-                {name}
-              </Link>
-            ))}
+      {isMobileOpen && (
+  <motion.div
+    initial={{ opacity: 0, y: -10 }}
+    animate={{ opacity: 1, y: 0 }}
+    className="md:hidden mt-2 bg-gray-900/95 backdrop-blur-md border-t border-gray-700 px-4 py-6 rounded-b-xl shadow-xl space-y-4"
+  >
+    {navItems.map(({ path, name }) => (
+      <Link
+        key={path}
+        href={path}
+        className="block text-base font-semibold text-gray-200 hover:text-white transition"
+        onClick={() => setIsMobileOpen(false)}
+      >
+        {name}
+      </Link>
+    ))}
 
-            <div className="pt-4 border-t border-gray-700">
-              {user ? (
-                <div className="flex flex-col gap-3 px-4">
-                  <span className="text-sm text-gray-400">
-                    Signed in as {user.email}
-                  </span>
-                  <button
-                    onClick={handleSignOut}
-                    className="text-left text-red-400 text-sm hover:bg-red-500/10 px-3 py-2 rounded transition"
-                  >
-                    Sign out
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={onSignInClick}
-                  className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-semibold px-5 py-3 rounded-lg hover:opacity-90 transition"
-                >
-                  Sign In
-                </button>
-              )}
-            </div>
-          </motion.div>
-        )}
+    <div className="pt-4 border-t border-gray-700">
+      {user ? (
+        <div className="flex flex-col gap-3">
+          <span className="text-sm text-gray-400">
+            Signed in as {user.email}
+          </span>
+          <button
+            onClick={handleSignOut}
+            className="text-left text-red-400 font-medium text-sm hover:bg-red-500/10 px-3 py-2 rounded transition"
+          >
+            Sign out
+          </button>
+        </div>
+      ) : (
+        <button
+          onClick={onSignInClick}
+          className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-semibold px-5 py-3 rounded-lg hover:opacity-90 transition"
+        >
+          Sign In
+        </button>
+      )}
+    </div>
+  </motion.div>
+)}
+
       </div>
     </motion.header>
   )

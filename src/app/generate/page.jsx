@@ -82,32 +82,8 @@ export default function GeneratePage() {
 
   return (
     <main className="min-h-screen bg-gray-900 text-gray-200">
-      {/* Improved Navbar */}
-      <motion.header 
-        className="fixed w-full top-0 z-50 bg-gray-800 backdrop-blur-sm bg-opacity-90 shadow-lg"
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <Link href="/" className="flex items-center space-x-2">
-              <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 text-transparent bg-clip-text">NextLeap</span>
-            </Link>
-            <nav className="hidden md:flex space-x-8">
-              <Link href="#about" className="text-gray-300 hover:text-white transition">About</Link>
-              <Link href="#features" className="text-gray-300 hover:text-white transition">Features</Link>
-              <Link href="#testimonials" className="text-gray-300 hover:text-white transition">Testimonials</Link>
-            </nav>
-            {/* User/Sign In Button (placeholder) */}
-            <div className="flex items-center gap-4">
-              {/* Replace with your user/sign-in logic */}
-            </div>
-          </div>
-        </div>
-      </motion.header>
+  
 
-      {/* Main Content */}
       <div className="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

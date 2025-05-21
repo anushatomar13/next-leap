@@ -51,28 +51,31 @@ export default function MyRoadmapsPage() {
             </p>
           </div>
         ) : (
-          <ul className="space-y-4">
-            {roadmaps.map((roadmap, index) => (
-              <motion.li
-                key={roadmap.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-                className="bg-gray-800 hover:bg-gray-750 transition-colors rounded-lg p-4 shadow-lg border border-gray-700 cursor-pointer"
-                onClick={() => router.push(`/roadmap/${roadmap.id}`)}
-              >
-                <h2 className="text-lg font-semibold text-white mb-1">
-                  {roadmap.current_job} → {roadmap.target_job}
-                </h2>
-                <p className="text-sm text-gray-400 mb-1">
-                  Timeframe: {roadmap.timeframe}
-                </p>
-                <p className="text-xs text-gray-500">
-                  Created: {new Date(roadmap.created_at).toLocaleString()}
-                </p>
-              </motion.li>
-            ))}
-          </ul>
+         <div className={`space-y-4 ${roadmaps.length > 4 ? 'max-h-[600px] overflow-y-auto pr-2' : ''}`}>
+  <ul>
+    {roadmaps.map((roadmap, index) => (
+      <motion.li
+        key={roadmap.id}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: index * 0.1 }}
+        className="bg-gray-800 hover:bg-gray-750 transition-colors rounded-lg p-4 shadow-lg border border-gray-700 cursor-pointer"
+        onClick={() => router.push(`/roadmap/${roadmap.id}`)}
+      >
+        <h2 className="text-lg font-semibold text-white mb-1">
+          {roadmap.current_job} → {roadmap.target_job}
+        </h2>
+        <p className="text-sm text-gray-400 mb-1">
+          Timeframe: {roadmap.timeframe}
+        </p>
+        <p className="text-xs text-gray-500">
+          Created: {new Date(roadmap.created_at).toLocaleString()}
+        </p>
+      </motion.li>
+    ))}
+  </ul>
+</div>
+
         )}
       </motion.div>
     </main>
