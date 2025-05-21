@@ -64,17 +64,17 @@ export async function getUserRoadmaps(userId) {
 }
 
 // Helper function to get a specific roadmap by ID
-export async function getRoadmapById(roadmapId) {
+export async function getRoadmapById(id) {
   const { data, error } = await supabase
     .from('roadmaps')
     .select('*')
-    .eq('id', roadmapId)
-    .single();
+    .eq('id', id)
+    .single()
 
   if (error) {
-    console.error('Error fetching roadmap:', error);
-    throw error;
+    console.error('Error fetching roadmap by ID:', error)
+    return null
   }
-  
-  return data;
+
+  return data
 }

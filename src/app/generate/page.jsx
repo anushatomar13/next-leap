@@ -10,33 +10,36 @@ export default function GeneratePage() {
   const [loading, setLoading] = useState(false)
   const [mermaidCode, setMermaidCode] = useState('')
 
-  const handleGenerate = async () => {
-    setLoading(true)
-    setMermaidCode('')
-    try {
-      const res = await fetch('/api/generate-roadmap', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ currentJob, targetJob, timeframe }),
+ const handleGenerate = async () => {
+  setLoading(true)
+  setMermaidCode('')
+  try {
+    const res = await fetch('/api/generate-roadmap', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ currentJob, targetJob, timeframe }),
+    })
+    const data = await res.json()
+    const aiMermaid = data.mermaid 
+
+    const user = await getUserData()
+    if (user) {
+      await saveRoadmap(user.id, {
+        currentJob,
+        targetJob,
+        timeframe,
+        content: aiMermaid, 
       })
-      const data = await res.json()
-      const user = await getUserData()
-if (user) {
-  await saveRoadmap(user.id, {
-    currentJob,
-    targetJob,
-    timeframe,
-    content: aiMermaid
-  })
-}
-      const aiMermaid = data.mermaid
-      setMermaidCode(aiMermaid)
-    } catch (err) {
-      console.error('Error generating roadmap', err)
-    } finally {
-      setLoading(false)
     }
+
+    setMermaidCode(aiMermaid)
+  } catch (err) {
+    console.error('Error generating roadmap', err)
+  } finally {
+    setLoading(false)
   }
+}
+
 
   return (
     <main className="p-6 max-w-3xl mx-auto">
