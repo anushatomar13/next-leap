@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase, getUserData, saveRoadmap } from '../../supabaseClient'
+import { getUserData, saveRoadmap } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
 export default function CreateRoadmapPage() {

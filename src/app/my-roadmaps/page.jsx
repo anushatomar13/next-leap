@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { getUserData, getUserRoadmaps } from '../../supabaseClient'
+import { getUserData,getUserRoadmaps } from '@/lib/supabase/client'
+
 
 export default function MyRoadmapsPage() {
   const [user, setUser] = useState(null)
