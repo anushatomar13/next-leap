@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { getUserData } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import Header from '@/components/Header'
+import Header from '@/components/Navbar'
 import HeroSection from '@/components/Hero'
 import AboutSection from '@/components/About'
 import FeaturesSection from '@/components/Features'
@@ -27,10 +27,7 @@ export default function LandingPage() {
 
   return (
     <main className="bg-gray-900 text-gray-100 min-h-screen">
-      <Header 
-        user={user} 
-        onSignInClick={() => setShowAuth(true)} 
-      />
+     
       
       <HeroSection onActionClick={() => router.push('/generate')} />
       <AboutSection />

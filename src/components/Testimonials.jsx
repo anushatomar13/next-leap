@@ -12,20 +12,17 @@ export default function TestimonialsSection() {
     {
       quote: "NextLeap gave me clarity on my career path when I was feeling lost. The personalized roadmap helped me focus on the right skills, and within 6 months I landed my dream job!",
       author: "Emily Johnson",
-      role: "Software Engineer at Google",
-      avatar: "/api/placeholder/64/64"
+      role: "Software Engineer "
     },
     {
       quote: "As someone switching careers, I was overwhelmed with information. NextLeap's AI narrowed down exactly what I needed to learn, saving me months of misdirected effort.",
       author: "Michael Chang",
-      role: "Former Teacher, now Data Analyst",
-      avatar: "/api/placeholder/64/64"
-    },
+      role: "Former Teacher, now Data Analyst"
+        },
     {
       quote: "The skill gap analysis was eye-opening. It identified my blind spots and connected me with resources that perfectly addressed my needs. I'm now much more confident in interviews.",
       author: "Sarah Williams",
-      role: "Product Manager at Stripe",
-      avatar: "/api/placeholder/64/64"
+      role: "Product Manager "
     }
   ]
 
@@ -72,11 +69,7 @@ export default function TestimonialsSection() {
                   {testimonials[activeTestimonial].quote}
                 </p>
                 <div className="mt-6 flex items-center gap-4">
-                  <img 
-                    src={testimonials[activeTestimonial].avatar} 
-                    alt={testimonials[activeTestimonial].author}
-                    className="h-12 w-12 rounded-full object-cover border-2 border-blue-500"
-                  />
+                  
                   <div>
                     <p className="font-semibold text-white">{testimonials[activeTestimonial].author}</p>
                     <p className="text-gray-400 text-sm">{testimonials[activeTestimonial].role}</p>
