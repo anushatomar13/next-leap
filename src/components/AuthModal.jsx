@@ -12,7 +12,7 @@ export default function AuthModal({ onClose }) {
         <Auth
           supabaseClient={supabase}
           appearance={{ theme: ThemeSupa }}
-          providers={['google']} // You can also use ['email'] or both
+          providers={['google']} 
           redirectTo="http://localhost:3000"
         />
       </div>
