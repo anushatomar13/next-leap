@@ -2,6 +2,9 @@
 import { useState } from 'react'
 import MermaidRenderer from '@/components/MermaidRenderer'
 import { getUserData,saveRoadmap } from '@/lib/supabase/client'
+import jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
+
 
 export default function GeneratePage() {
   const [currentJob, setCurrentJob] = useState('')
@@ -40,6 +43,49 @@ export default function GeneratePage() {
   }
 }
 
+const handlePDFDownload = async () => {
+  const chartElement = document.querySelector('.mermaid')
+
+  if (!chartElement) {
+    alert('No flowchart to export.')
+    return
+  }
+
+  const canvas = await html2canvas(chartElement, {
+    backgroundColor: '#ffffff',
+    scale: 2,
+  })
+
+  const imgData = canvas.toDataURL('image/png')
+
+  const pdf = new jsPDF({
+    orientation: 'portrait',
+    unit: 'pt',
+    format: 'a4',
+  })
+
+  
+  const imgWidth = canvas.width
+  const imgHeight = canvas.height
+pdf.setFont('times', 'italic')           
+pdf.setFontSize(12)
+pdf.setTextColor(100, 100, 100)         
+
+// Align right at bottom-right corner
+const pageWidth = pdf.internal.pageSize.getWidth()
+const pageHeight = pdf.internal.pageSize.getHeight()
+
+pdf.text('By NextLeap', pageWidth - 80, pageHeight - 30)
+  // Scale to fit A4
+  const scale = Math.min(pageWidth / imgWidth, pageHeight / imgHeight)
+  const x = (pageWidth - imgWidth * scale) / 2
+  const y = 40 // leave top margin
+
+  pdf.addImage(imgData, 'PNG', x, y, imgWidth * scale, imgHeight * scale)
+  pdf.save('career-roadmap.pdf')
+}
+
+
 
   return (
     <main className="p-6 max-w-3xl mx-auto">
@@ -76,10 +122,17 @@ export default function GeneratePage() {
       </div>
 
       {mermaidCode && (
-        <div className="mt-8 border rounded p-4 bg-white shadow">
-          <MermaidRenderer chart={mermaidCode} />
-        </div>
-      )}
+  <div className="mt-8 border rounded p-4 bg-white shadow">
+    <MermaidRenderer chart={mermaidCode} />
+    <button
+      onClick={handlePDFDownload}
+      className="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+    >
+      Your flowchart is ready – Click here to download as PDF
+    </button>
+  </div>
+)}
+
     </main>
   )
 }
