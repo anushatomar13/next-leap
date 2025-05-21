@@ -3,8 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { getRoadmapById } from '@/lib/supabase/client'
-import PDFDocument from 'pdfkit'
-import blobStream from 'blob-stream'
+import jsPDF from 'jspdf'
 
 export default function RoadmapDetailPage() {
   const { id } = useParams()
@@ -32,26 +31,24 @@ export default function RoadmapDetailPage() {
   }, [id, router])
 
   const downloadPDF = () => {
-    const doc = new PDFDocument()
-    const stream = doc.pipe(blobStream())
+    const doc = new jsPDF()
 
-    doc.fontSize(20).text(`Career Roadmap`, { align: 'center' })
-    doc.moveDown()
-    doc.fontSize(14).text(`Current Job: ${roadmap.current_job}`)
-    doc.text(`Target Role: ${roadmap.target_job}`)
-    doc.text(`Timeframe: ${roadmap.timeframe}`)
-    doc.moveDown()
-    doc.fontSize(12).text(`Roadmap Steps:\n${roadmap.roadmap_content}`, { lineGap: 6 })
+    doc.setFontSize(20)
+    doc.text('Career Roadmap', 20, 20)
 
-    doc.end()
+    doc.setFontSize(12)
+    doc.text(`Current Job: ${roadmap.current_job}`, 20, 40)
+    doc.text(`Target Role: ${roadmap.target_job}`, 20, 50)
+    doc.text(`Timeframe: ${roadmap.timeframe}`, 20, 60)
 
-    stream.on('finish', () => {
-      const url = stream.toBlobURL('application/pdf')
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `nextleap_roadmap_${roadmap.id}.pdf`
-      a.click()
+    doc.text('Roadmap Steps:', 20, 80)
+
+    const steps = roadmap.roadmap_content.split('\n').filter(Boolean)
+    steps.forEach((step, index) => {
+      doc.text(`${index + 1}. ${step.trim()}`, 25, 90 + index * 10)
     })
+
+    doc.save(`nextleap_roadmap_${roadmap.id}.pdf`)
   }
 
   if (loading) return <p className="p-6">Loading roadmap...</p>

@@ -3,55 +3,51 @@
 import { useEffect, useState } from 'react'
 import { supabase, getUserData } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import AuthModal from '../components/AuthModal'
 
-export default function Home() {
+export default function LandingPage() {
   const [user, setUser] = useState(null)
-  const router = useRouter()
+  const [showAuth, setShowAuth] = useState(false)
 
   useEffect(() => {
     async function loadUser() {
-      const currentUser = await getUserData()
-      setUser(currentUser)
+      const user = await getUserData()
+      if (user) setUser(user)
     }
     loadUser()
   }, [])
 
-  const handleLogin = async () => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'github',
-    })
-    if (error) console.error('Login error:', error)
-  }
-
-  const handleLogout = async () => {
+  const handleSignOut = async () => {
     await supabase.auth.signOut()
     setUser(null)
   }
 
   return (
-    <main className="p-6">
-      <header className="flex justify-between items-center mb-10">
-        <h1 className="text-3xl font-bold">NextLeap</h1>
+    <main className="min-h-screen p-6 flex flex-col items-center justify-center">
+      <header className="w-full flex justify-end mb-6">
         {user ? (
-          <button onClick={handleLogout} className="bg-red-500 text-white px-4 py-2 rounded">Logout</button>
+          <div className="space-x-4">
+            <span>Hi, {user.user_metadata.full_name || user.email}</span>
+            <button onClick={handleSignOut} className="text-sm text-red-600 hover:underline">Sign Out</button>
+          </div>
         ) : (
-          <button onClick={handleLogin} className="bg-blue-500 text-white px-4 py-2 rounded">Sign In / Sign Up</button>
+          <button onClick={() => setShowAuth(true)} className="text-sm text-blue-600 hover:underline">Sign In / Sign Up</button>
         )}
       </header>
 
-      <section className="text-center mt-20">
-        <h2 className="text-2xl">
-          {user ? `Hi, ${user.user_metadata.full_name || user.email}!` : 'Welcome to NextLeap 🚀'}
-        </h2>
-        {user && (
-          <button
-            onClick={() => router.push('/create-roadmap')}
-            className="mt-8 bg-green-600 text-white px-6 py-3 rounded text-lg"
-          >
-            Generate Your Roadmap
-          </button>
-        )}
-      </section>
+      <h1 className="text-4xl font-bold mb-4">Welcome to NextLeap</h1>
+      <p className="text-lg mb-8 text-gray-600">Your personalized AI-powered career roadmap tool.</p>
+
+      {user && (
+        <button
+          className="bg-green-600 text-white px-6 py-3 rounded hover:bg-green-700"
+          onClick={() => window.location.href = '/create-roadmap'}
+        >
+          Generate Your Roadmap
+        </button>
+      )}
+
+      {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
     </main>
   )
 }
