@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { getUserData,getUserRoadmaps } from '@/lib/supabase/client'
-
+import { getUserData, getUserRoadmaps } from '@/lib/supabase/client'
 
 export default function MyRoadmapsPage() {
   const [user, setUser] = useState(null)
@@ -36,8 +35,6 @@ export default function MyRoadmapsPage() {
 
   return (
     <main className="p-6 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">My Career Roadmaps</h1>
-
       {loading ? (
         <p>Loading...</p>
       ) : roadmaps.length === 0 ? (
@@ -50,9 +47,13 @@ export default function MyRoadmapsPage() {
               className="border rounded p-4 hover:bg-gray-100 cursor-pointer"
               onClick={() => router.push(`/roadmap/${roadmap.id}`)}
             >
-              <h2 className="text-lg font-semibold">{roadmap.current_job} → {roadmap.target_job}</h2>
+              <h2 className="text-lg font-semibold">
+                {roadmap.current_job} → {roadmap.target_job}
+              </h2>
               <p className="text-sm text-gray-600">Timeframe: {roadmap.timeframe}</p>
-              <p className="text-xs text-gray-500">Created: {new Date(roadmap.created_at).toLocaleDateString()}</p>
+              <p className="text-xs text-gray-500">
+                Created: {new Date(roadmap.created_at).toLocaleString()}
+              </p>
             </li>
           ))}
         </ul>

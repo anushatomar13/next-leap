@@ -14,32 +14,14 @@ export const createSupabaseClient = () => {
 export const supabase = createSupabaseClient();
 
 // Helper function to get user data
-// supabaseClient.js
-
 export async function getUserData() {
-  const {
-    data: { session },
-    error: sessionError,
-  } = await supabase.auth.getSession();
-
-  if (sessionError || !session) {
-    console.error('No session found:', sessionError);
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error) {
+    console.error('Error fetching user data:', error);
     return null;
   }
-
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-
-  if (userError) {
-    console.error('Error fetching user:', userError);
-    return null;
-  }
-
   return user;
 }
-
 
 // Helper function to save a roadmap to the database
 export async function saveRoadmap(userId, roadmapData) {

@@ -1,53 +1,38 @@
-
 import { NextResponse } from 'next/server'
+import Groq from 'groq-sdk'
+
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
 
 export async function POST(req) {
-  const { currentRole, targetRole } = await req.json()
+  const { currentJob, targetJob, timeframe } = await req.json()
 
-  if (!currentRole || !targetRole) {
-    return NextResponse.json({ error: 'Missing input' }, { status: 400 })
-  }
+  const prompt = `You're an expert career coach. Generate a 5-step career roadmap to go from "${currentJob}" to "${targetJob}" within "${timeframe}". 
 
-  try {
-    const prompt = `
-You are an expert career coach. Generate a concise, actionable career roadmap for someone moving from "${currentRole}" to "${targetRole}". 
-Break it down into 4–6 realistic, sequential steps.
+Return ONLY the Mermaid.js flowchart code, and nothing else.
 
-Then, convert the roadmap into Mermaid.js flowchart format like this:
-
+The chart should begin with:
 \`\`\`mermaid
 flowchart TD
-    A["Start: ${currentRole}"]
-    A --> B["Step 1"]
-    B --> C["Step 2"]
-    C --> D["Step 3"]
-    D --> E["Goal: ${targetRole}"]
+A["Start"]
+
+Each step should be a node, e.g., A --> B["Learn basics"], and end with G["Goal Reached"].
+Only return the Mermaid.js code block – do not include any explanation or introductory text.
 \`\`\`
-Return only the mermaid code.
-    `.trim()
+`;
 
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
-        'Content-Type': 'application/json'
+  const completion = await groq.chat.completions.create({
+    messages: [
+      {
+        role: 'user',
+        content: prompt,
       },
-      body: JSON.stringify({
-        model: 'llama3-8b-8192',
-        messages: [
-          { role: 'system', content: 'You are a helpful assistant.' },
-          { role: 'user', content: prompt }
-        ],
-        temperature: 0.7
-      })
-    })
+    ],
+    model: 'llama3-70b-8192',
+  })
 
-    const json = await response.json()
-    const content = json.choices?.[0]?.message?.content || ''
+  const aiReply = completion.choices[0]?.message?.content || ''
+  const match = aiReply.match(/```mermaid\s*([\s\S]*?)```/i)
+  const mermaidOnly = match ? match[1].trim() : ''
 
-    return NextResponse.json({ mermaidCode: content.trim() })
-  } catch (err) {
-    console.error('Groq API Error:', err)
-    return NextResponse.json({ error: 'Failed to generate roadmap' }, { status: 500 })
-  }
+  return NextResponse.json({ mermaid: mermaidOnly })
 }

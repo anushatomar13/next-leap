@@ -1,20 +1,21 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase, getUserData } from '@/lib/supabase/client'
+import AuthModal from '@/components/AuthModal'
 import { useRouter } from 'next/navigation'
-import AuthModal from '../components/AuthModal'
 
 export default function LandingPage() {
-  const [user, setUser] = useState(null)
   const [showAuth, setShowAuth] = useState(false)
+  const [user, setUser] = useState(null)
+  const router = useRouter()
 
   useEffect(() => {
-    async function loadUser() {
-      const user = await getUserData()
-      if (user) setUser(user)
+    async function fetchUser() {
+      const data = await getUserData()
+      setUser(data)
     }
-    loadUser()
+    fetchUser()
   }, [])
 
   const handleSignOut = async () => {
@@ -23,29 +24,31 @@ export default function LandingPage() {
   }
 
   return (
-    <main className="min-h-screen p-6 flex flex-col items-center justify-center">
-      <header className="w-full flex justify-end mb-6">
-        {user ? (
-          <div className="space-x-4">
-            <span>Hi, {user.user_metadata.full_name || user.email}</span>
-            <button onClick={handleSignOut} className="text-sm text-red-600 hover:underline">Sign Out</button>
-          </div>
-        ) : (
-          <button onClick={() => setShowAuth(true)} className="text-sm text-blue-600 hover:underline">Sign In / Sign Up</button>
-        )}
-      </header>
+    <main className="max-w-4xl mx-auto p-6">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">NextLeap</h1>
+        <div>
+          {user ? (
+            <div className="flex items-center gap-4">
+              <span>Hello, {user.user_metadata?.full_name || user.email}</span>
+              <button onClick={handleSignOut} className="text-sm text-red-600 underline">Sign out</button>
+            </div>
+          ) : (
+            <button onClick={() => setShowAuth(true)} className="bg-blue-600 text-white px-4 py-2 rounded">Sign In / Sign Up</button>
+          )}
+        </div>
+      </div>
 
-      <h1 className="text-4xl font-bold mb-4">Welcome to NextLeap</h1>
-      <p className="text-lg mb-8 text-gray-600">Your personalized AI-powered career roadmap tool.</p>
-
-      {user && (
+      <div className="text-center mt-20">
+        <h2 className="text-2xl font-semibold mb-4">AI-powered Career Roadmaps</h2>
+        <p className="mb-6">Plan your career path from where you are to where you want to be.</p>
         <button
+          onClick={() => router.push('/generate')}
           className="bg-green-600 text-white px-6 py-3 rounded hover:bg-green-700"
-          onClick={() => window.location.href = '/create-roadmap'}
         >
           Generate Your Roadmap
         </button>
-      )}
+      </div>
 
       {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
     </main>
